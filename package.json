@@ -5,7 +5,6 @@
     "node": "24.x"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
-    "docx": "^8.5.0"
+    "@anthropic-ai/sdk": "^0.39.0"
   }
 }
