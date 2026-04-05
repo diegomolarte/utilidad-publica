@@ -264,9 +264,29 @@ INSTRUCCIONES:
 
 4. En el cuerpo del documento, inserta las referencias cruzadas (ver Anexo No. X) cada vez que menciones una prueba.
 
-5. Registro formal jurídico. Tercera persona. Los hijos siempre con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)".
+5. AJUSTE ADRES — PERSONAS PRIVADAS DE LA LIBERTAD: Si la consulta ADRES muestra a la condenada como "retirada" o sin afiliación vigente, NO interpretes esto como ausencia de cobertura de salud. Esto ocurre porque al ingresar al sistema penitenciario, la atención en salud pasa al Fondo de Atención en Salud para la Población Privada de la Libertad (FASPPL), y la persona sale automáticamente del Sistema General de Seguridad Social en Salud. En ese caso, redacta así: "La señora [NOMBRE] figuraba afiliada al momento de su privación de la libertad como [régimen y calidad que aparezca en la consulta]. En la actualidad aparece retirada del Sistema General de Seguridad Social en Salud, lo cual obedece a que, una vez privada de la libertad, su atención en salud quedó a cargo del Fondo de Atención en Salud para la Población Privada de la Libertad, conforme a la normativa penitenciaria vigente (ver Anexo No. X)."
 
-6. Si algún dato del caso no está disponible, usa [PENDIENTE].
+6. DECRETO REGLAMENTARIO: La Ley 2292 de 2023 está reglamentada por el Decreto 1451 de 2023. Si necesitas citar el decreto reglamentario, usa siempre el Decreto 1451 de 2023. NUNCA cites el Decreto 1069 de 2024.
+
+7. TEXTO OBLIGATORIO DE ARRANQUE DE LA SECCIÓN 2: La sección de fundamentos jurídicos SIEMPRE debe comenzar exactamente con el siguiente texto, sin modificaciones, antes de la verificación de los 4 requisitos:
+
+"FUNDAMENTOS JURÍDICOS LEY 2292 DE 2023 QUE SE CUMPLEN EN EL CASO CONCRETO
+
+La Ley 2292 del 8 de marzo de 2023 surge como una respuesta del Estado frente a una realidad ampliamente documentada en el sistema penitenciario: un número significativo de mujeres privadas de la libertad son madres que han debido asumir solas la responsabilidad de sus hogares y que terminaron involucradas en conductas delictivas en contextos de precariedad económica, exclusión social y ausencia de oportunidades reales. Por ello, esta ley incorpora acciones afirmativas en materia de política criminal y penitenciaria para mujeres cabeza de familia, reconociendo que la respuesta punitiva tradicional (basada exclusivamente en el encarcelamiento) puede generar consecuencias desproporcionadas no solo para la mujer condenada, sino también para los hijos menores que dependen de ella.
+
+En este mismo sentido, la Corte Constitucional, mediante la Sentencia C-256 de 2022, advirtió que los Estados deben implementar medidas alternativas al encarcelamiento cuando se trate de mujeres que, debido a sus condiciones de vida, se ven involucradas en delitos asociados, entre otros, al narcotráfico. Esta consideración no constituye una simple afirmación retórica. Por el contrario, representa un llamado a que la política criminal tenga en cuenta los datos empíricos y las realidades sociales que rodean la vida de muchas mujeres procesadas penalmente.
+
+En desarrollo de esta orientación, la Ley 2292 incorporó al ordenamiento jurídico la pena sustitutiva de servicios de utilidad pública para mujeres cabeza de familia, consistente en la prestación de servicios no remunerados, en libertad, a favor de instituciones públicas u organizaciones sin ánimo de lucro en el lugar de domicilio de la condenada. Se trata de una medida que permite el cumplimiento de la sanción penal sin desarraigar completamente a la mujer de su entorno familiar, especialmente cuando existen hijos menores de edad que dependen de su cuidado y acompañamiento cotidiano.
+
+La Ley 2292 de 2023, en su artículo 7 —que adicionó el artículo 38-I al Código Penal— establece los requisitos para acceder a esta pena sustitutiva. Dichos requisitos fueron sintetizados por la Honorable Corte Constitucional en los siguientes términos: 'Solo opera para mujeres cabeza de familia, condenadas por los delitos establecidos en los artículos 239, 240, 241, 375, 376 y 377 del Código Penal, o condenadas a otros delitos cuya pena impuesta sea igual o inferior a ocho (8) años de prisión (art. 2 y art. 7.1). Se debe demostrar que la comisión del delito está asociada a condiciones de marginalidad que afecten la manutención del hogar (art. 2 y art. 7.6). La medida [...] no se aplicará cuando haya condena en firme por otro delito doloso dentro de los (5) años anteriores a la comisión del nuevo ilícito o exista concurso con conductas punibles distintas a las señaladas con anterioridad (art. 2), salvo que se trate de delitos culposos, que tengan como pena principal la multa o que sea por los punibles anteriormente enunciados (art. 7.2). Se debe demostrar que la beneficiaria es madre cabeza de familia. Lo cual significa, para los efectos del proyecto de ley, tener vínculos familiares, demostrando que la condenada ejerce la jefatura del hogar y tiene bajo su cargo afectiva, económica y socialmente de manera permanente hijos menores o personas en condición de discapacidad permanente (art. 7.4).' (Sentencia C-256 de 2022, párrafo 272).
+
+A continuación se acredita el cumplimiento de cada uno de estos requisitos en el caso concreto de la señora [NOMBRE COMPLETO DE LA CONDENADA]:"
+
+Después de este bloque fijo, continúa con la verificación de los 4 requisitos.
+
+8. Registro formal jurídico. Tercera persona. Los hijos siempre con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)".
+
+9. Si algún dato del caso no está disponible, usa [PENDIENTE].
 
 Responde SOLO con un JSON válido sin backticks, con esta estructura exacta:
 {
@@ -277,8 +297,8 @@ Responde SOLO con un JSON válido sin backticks, con esta estructura exacta:
   "encabezado_ciudad": "[ciudad], [departamento]",
   "parrafo_intro": "párrafo introductorio completo donde el defensor se presenta y formula la solicitud",
   "seccion1_contexto": "sección completa de contexto de jefatura y marginalidad — múltiples párrafos separados por doble salto de línea, con referencias cruzadas a los anexos",
-  "seccion2_fundamentos": "sección completa de fundamentos jurídicos verificando los 4 requisitos de la Ley 2292",
-  "seccion3_plaza": "sección completa sobre la plaza SIUP y el plan de servicios",
+  "seccion2_fundamentos": "sección completa comenzando OBLIGATORIAMENTE con el texto fijo indicado en la instrucción 7, seguido de la verificación de los 4 requisitos de la Ley 2292",
+  "seccion3_plaza": "sección completa sobre la plaza SIUP y el plan de servicios, citando el Decreto 1451 de 2023 si corresponde",
   "seccion4_peticion": "texto completo de la petición con los tres numerales",
   "lista_anexos": "lista completa de anexos numerada, un anexo por línea comenzando con •",
   "notificaciones": "texto de notificaciones con dirección de la condenada y del defensor",
