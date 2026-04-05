@@ -207,8 +207,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
-  const apiKey = req.headers['x-api-key'];
-  if (!apiKey || !apiKey.startsWith('sk-ant-')) return res.status(401).json({ error: 'API key inválida' });
+  const apiKey = req.headers["x-api-key"] || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(401).json({ error: 'API key inválida' });
 
   const { campos } = req.body;
   if (!campos?.notas) return res.status(400).json({ error: 'Faltan notas del caso' });
