@@ -1,6 +1,9 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createHash } from 'crypto';
 import { gzipSync } from 'zlib';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 // Genera un .docx (ZIP con XML) sin dependencias externas
 function crearDocx(campos, secciones) {
@@ -92,8 +95,10 @@ ${parrafo(hoy)}
 <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>
 </Relationships>`;
 
-const IMG_DEFENSORIA =  + b64_defensoria + ;
-const IMG_BUENFUTUROHOY =  + b64_buenfuturohoy + ;
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const IMG_DEFENSORIA = readFileSync(join(__dirname, '../public/logo_defensoria.png'));
+const IMG_BUENFUTUROHOY = readFileSync(join(__dirname, '../public/logo_buenfuturohoy.png'));
 
 const headerXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
