@@ -70,7 +70,7 @@ ${parrafo('')}
 ${parrafo('3.  Rol de jefatura de hogar', {bold:true,before:200,after:100,justify:false})}
 ${seccion(secciones.jefatura_hogar)}
 ${parrafo('')}
-${parrafo('4.  Hechos que dieron lugar a la captura en flagrancia.', {bold:true,before:200,after:100,justify:false})}
+${parrafo('4.  Hechos que dieron lugar al delito', {bold:true,before:200,after:100,justify:false})}
 ${seccion(secciones.hechos_captura)}
 ${parrafo('')}
 ${parrafo('Conclusión.', {bold:true,before:200,after:100,justify:false})}
@@ -186,8 +186,8 @@ const headerRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     return { local: Buffer.concat([local, dataBuf]), name: nameBuf, crc, size: dataBuf.length, compressed: dataBuf.length };
   }
 
-  const img1Buf = Buffer.from(IMG_DEFENSORIA, 'base64');
-  const img2Buf = Buffer.from(IMG_BUENFUTUROHOY, 'base64');
+  const img1Buf = Buffer.isBuffer(IMG_DEFENSORIA) ? IMG_DEFENSORIA : Buffer.from(IMG_DEFENSORIA);
+  const img2Buf = Buffer.isBuffer(IMG_BUENFUTUROHOY) ? IMG_BUENFUTUROHOY : Buffer.from(IMG_BUENFUTUROHOY);
 
   const archivos = [
     ['[Content_Types].xml', contentTypes],
@@ -285,8 +285,12 @@ ${campos.notas}
 
 Registro formal jurídico tercera persona. Usa "manifestó que", "señaló que", "refirió que". Transforma lenguaje informal. Hijos con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)". Si falta dato usa [PENDIENTE].
 
+REGLAS ESTRICTAS:
+- La sección "hechos_captura" narra SOLO el relato de cómo ocurrió el delito: el contexto inmediato, la motivación y el acto. NO incluyas ningún dato judicial: no menciones juzgados, radicados, medidas de aseguramiento, fechas de imposición de medidas, ni ninguna referencia al proceso penal posterior al hecho. Se sobreentiende que está privada de la libertad.
+- NUNCA incluyas párrafos de recomendaciones, sugerencias al lector o notas como "se recomienda adelantar gestiones", "se sugiere verificar", "se recomienda completar la información", ni ningún texto de ese tipo. El documento es un reporte de entrevista, no un informe con recomendaciones. Si falta información, simplemente usa [PENDIENTE] en el dato específico y nada más.
+
 Responde SOLO JSON sin backticks:
-{"marginalidad":"3-5 párrafos separados por doble salto","jefatura_hogar":"4-6 párrafos","hechos_captura":"5-6 párrafos cronológicos","conclusion":"3-4 párrafos mencionando Ley 2292 de 2023"}` }]
+{"marginalidad":"3-5 párrafos separados por doble salto","jefatura_hogar":"4-6 párrafos","hechos_captura":"5-6 párrafos narrando SOLO el contexto previo al delito, la motivación económica y el acto. SIN datos judiciales posteriores.","conclusion":"3-4 párrafos mencionando Ley 2292 de 2023"}` }]
     });
 
     const secciones = JSON.parse(message.content[0].text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim());
