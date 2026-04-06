@@ -171,7 +171,7 @@ const headerRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     return { local: Buffer.concat([local, dataBuf]), name: nameBuf, crc, size: dataBuf.length };
   }
 
-  const imgSolBuf = Buffer.from(IMG_SOLICITUD, 'base64');
+  const imgSolBuf = Buffer.isBuffer(IMG_SOLICITUD) ? IMG_SOLICITUD : Buffer.from(IMG_SOLICITUD);
 
   const archivos = [
     ['[Content_Types].xml', contentTypes], ['_rels/.rels', packageRels],
