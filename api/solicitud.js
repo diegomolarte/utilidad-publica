@@ -122,7 +122,7 @@ ${p('Defensoría del Pueblo', {justify:false})}
 
 
 const __dirnameS = dirname(fileURLToPath(import.meta.url));
-const IMG_SOLICITUD = readFileSync(join(__dirnameS, '../public/logo_solicitud.png'));
+const IMG_SOLICITUD = readFileSync(join(__dirnameS, 'logos/logo_solicitud.png'));
 
 const headerXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
