@@ -97,8 +97,8 @@ ${parrafo(hoy)}
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const IMG_DEFENSORIA = readFileSync(join(__dirname, '../public/logo_defensoria.png'));
-const IMG_BUENFUTUROHOY = readFileSync(join(__dirname, '../public/logo_buenfuturohoy.png'));
+const IMG_DEFENSORIA = readFileSync(join(__dirname, 'logos/logo_defensoria.png'));
+const IMG_BUENFUTUROHOY = readFileSync(join(__dirname, 'logos/logo_buenfuturohoy.png'));
 
 const headerXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
