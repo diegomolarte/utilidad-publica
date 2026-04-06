@@ -1,9 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createHash } from 'crypto';
 import { gzipSync } from 'zlib';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
 // ── ZIP/DOCX builder (igual que generar.js) ─────────────────
 function crc32(buf) {
@@ -17,6 +14,8 @@ function crc32(buf) {
   for (let i = 0; i < buf.length; i++) crc = table[(crc ^ buf[i]) & 0xFF] ^ (crc >>> 8);
   return (crc ^ 0xFFFFFFFF) >>> 0;
 }
+
+
 
 function crearDocx(secciones) {
   const estilos = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -36,7 +35,7 @@ function crearDocx(secciones) {
   const Cm = n => Math.round(n * 567);
 
   function p(txt, opts = {}) {
-    const { bold=false, size=24, before=0, after=120, justify=true, bullet=false, center=false } = opts;
+    const { bold=false, size=24, before=0, after=0, justify=true, bullet=false, center=false } = opts;
     const align = center ? '<w:jc w:val="center"/>' : (justify && !bullet ? '<w:jc w:val="both"/>' : '');
     const pPr = `<w:pPr>${align}${bullet ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : ''}<w:spacing w:before="${before}" w:after="${after}"/></w:pPr>`;
     const rPr = `<w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana"/><w:sz w:val="${size}"/>${bold ? '<w:b/>' : ''}</w:rPr>`;
@@ -53,7 +52,7 @@ function crearDocx(secciones) {
       if (lineas.every(l => /^[•\-\*]/.test(l))) {
         lineas.forEach(l => out += p(l.replace(/^[•\-\*]\s*/,''), {bullet:true, after:60}));
       } else {
-        out += p(lineas.join(' '));
+        out += p(lineas.join(' '), {before:120, after:120});
       }
     }
     return out;
@@ -62,50 +61,30 @@ function crearDocx(secciones) {
   const cuerpo = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:body>
-<w:sectPr><w:headerReference w:type="default" r:id="rId3"/><w:pgMar w:top="1134" w:right="1418" w:bottom="1418" w:left="1701" w:header="567" w:footer="567"/></w:sectPr>
+<w:sectPr><w:pgMar w:top="1134" w:right="1418" w:bottom="1418" w:left="1701" w:header="567" w:footer="567"/></w:sectPr>
 ${p(secciones.encabezado_ciudad_fecha || '', {justify:false})}
 ${p(secciones.encabezado_cargo_juez || '', {justify:false})}
 ${p(secciones.encabezado_nombre_juez || '', {justify:false, bold:true})}
 ${p(secciones.encabezado_juzgado || '', {justify:false})}
 ${p(secciones.encabezado_ciudad || '', {justify:false})}
 ${p('E.S.D.', {justify:false})}
-${p('')}
 ${p('Honorable Señor(a) Juez:', {justify:false})}
-${p('')}
 ${seccionTexto(secciones.parrafo_intro)}
-${p('')}
 ${p('I. CONTEXTO DE JEFATURA DE HOGAR Y MARGINALIDAD', {bold:true, before:200, after:120, justify:false})}
-${p('')}
 ${seccionTexto(secciones.seccion1_contexto)}
-${p('')}
 ${p('II. FUNDAMENTOS JURÍDICOS', {bold:true, before:200, after:120, justify:false})}
-${p('')}
 ${seccionTexto(TEXTO_FIJO_SECCION2.replace('[NOMBRE COMPLETO DE LA CONDENADA]', secciones.nombre_condenada || '[PENDIENTE]'))}
-${p('')}
 ${seccionTexto(secciones.seccion2_requisitos)}
-${p('')}
 ${p('III. PROPUESTA FRENTE AL PLAN DE SERVICIOS DE UTILIDAD PÚBLICA', {bold:true, before:200, after:120, justify:false})}
-${p('')}
 ${seccionTexto(secciones.seccion3_plaza)}
-${p('')}
 ${p('IV. PETICIÓN', {bold:true, before:200, after:120, justify:false})}
-${p('')}
 ${seccionTexto(secciones.seccion4_peticion)}
-${p('')}
 ${p('ANEXOS', {bold:true, before:200, after:120, justify:false})}
-${p('')}
 ${p('Se aportan como pruebas, entre otros:')}
-${p('')}
 ${seccionTexto(secciones.lista_anexos)}
-${p('')}
 ${p('NOTIFICACIONES', {bold:true, before:200, after:120, justify:false})}
-${p('')}
 ${seccionTexto(secciones.notificaciones)}
-${p('')}
 ${p('Cordialmente,')}
-${p('')}
-${p('')}
-${p('')}
 ${p(secciones.firma_nombre || '[NOMBRE DEFENSORA]', {bold:true, justify:false})}
 ${p('Defensora Pública', {justify:false})}
 ${p(secciones.firma_tp ? 'T.P. No. ' + secciones.firma_tp : 'T.P. No. [PENDIENTE]', {justify:false})}
@@ -117,39 +96,19 @@ ${p('Defensoría del Pueblo', {justify:false})}
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
 <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
-<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>
+
 </Relationships>`;
 
 
-const __dirnameS = dirname(fileURLToPath(import.meta.url));
-const IMG_SOLICITUD = readFileSync(join(__dirnameS, 'logos/logo_solicitud.png'));
 
-const headerXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-       xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
-       xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
-       xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-<w:p>
-<w:r><w:rPr/><w:drawing><wp:inline><wp:extent cx="5486400" cy="457200"/><wp:docPr id="1" name="logo_sol"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="1" name="logo_sol"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId4"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="5486400" cy="457200"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>
-</w:p>
-<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="auto"/></w:pBdr></w:pPr></w:p>
-</w:hdr>`;
-
-const headerRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/img_sol.png"/>
-</Relationships>`;
 
   const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 <Default Extension="xml" ContentType="application/xml"/>
-<Default Extension="png" ContentType="image/png"/>
 <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
 <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
-<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
 </Types>`;
 
   const packageRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -171,15 +130,10 @@ const headerRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     return { local: Buffer.concat([local, dataBuf]), name: nameBuf, crc, size: dataBuf.length };
   }
 
-  const imgSolBuf = Buffer.isBuffer(IMG_SOLICITUD) ? IMG_SOLICITUD : Buffer.from(IMG_SOLICITUD);
-
   const archivos = [
     ['[Content_Types].xml', contentTypes], ['_rels/.rels', packageRels],
     ['word/document.xml', cuerpo], ['word/styles.xml', estilos],
     ['word/numbering.xml', numeracion], ['word/_rels/document.xml.rels', rels],
-    ['word/header1.xml', headerXml],
-    ['word/_rels/header1.xml.rels', headerRels],
-    ['word/media/img_sol.png', imgSolBuf],
   ];
 
   const entries = []; let offset = 0; const localParts = [];
