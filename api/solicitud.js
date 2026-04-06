@@ -269,7 +269,7 @@ INSTRUCCIONES:
 
 6. DECRETO REGLAMENTARIO: La Ley 2292 de 2023 está reglamentada por el Decreto 1451 de 2023. Si citas el decreto reglamentario, usa siempre el Decreto 1451 de 2023. NUNCA cites el Decreto 1069 de 2024.
 
-7. Registro formal jurídico. Tercera persona. Los hijos siempre con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)".
+7. Registro formal jurídico. Tercera persona. Los hijos siempre con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)". Cuando cites la ley, usa SIEMPRE "Ley 2292 de 2023" sin citar su nombre completo. NUNCA escribas el nombre largo de la ley.
 
 8. Si algún dato no está disponible, usa [PENDIENTE].
 
