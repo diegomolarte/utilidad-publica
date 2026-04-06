@@ -8,7 +8,7 @@ function crearDocx(campos, secciones) {
 
   const estilos = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana"/><w:sz w:val="24"/></w:rPr></w:rPrDefault></w:docDefaults>
 <w:style w:type="paragraph" w:styleId="ListBullet"><w:name w:val="List Bullet"/><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr></w:pPr></w:style>
 </w:styles>`;
 
@@ -23,7 +23,7 @@ function crearDocx(campos, secciones) {
   function parrafo(txt, opts = {}) {
     const { bold = false, size = 22, before = 0, after = 100, justify = true, bullet = false } = opts;
     const pPr = `<w:pPr>${justify && !bullet ? '<w:jc w:val="both"/>' : ''}${bullet ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : ''}<w:spacing w:before="${before}" w:after="${after}"/></w:pPr>`;
-    const rPr = `<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="${size}"/>${bold ? '<w:b/>' : ''}</w:rPr>`;
+    const rPr = `<w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana"/><w:sz w:val="${size}"/>${bold ? '<w:b/>' : ''}</w:rPr>`;
     return `<w:p>${pPr}<w:r>${rPr}<w:t xml:space="preserve">${esc(txt)}</w:t></w:r></w:p>`;
   }
 
@@ -47,7 +47,7 @@ function crearDocx(campos, secciones) {
   const cuerpo = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 <w:body>
-<w:sectPr><w:pgMar w:top="1134" w:right="1418" w:bottom="1418" w:left="1701" w:header="567" w:footer="567"/></w:sectPr>
+<w:sectPr><w:headerReference w:type="default" r:id="rId3"/><w:pgMar w:top="1134" w:right="1418" w:bottom="1418" w:left="1701" w:header="567" w:footer="567"/></w:sectPr>
 ${parrafo('REPORTE DE ENTREVISTA', {bold:true,size:24,after:40,justify:false})}
 ${parrafo('LEY 2292 DE 2023', {bold:true,size:24,after:40,justify:false})}
 ${parrafo('SERVICIOS DE UTILIDAD PÚBLICA', {bold:true,size:24,after:40,justify:false})}
@@ -89,15 +89,54 @@ ${parrafo(hoy)}
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
 <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>
+</Relationships>`;
+
+const IMG_DEFENSORIA =  + b64_defensoria + ;
+const IMG_BUENFUTUROHOY =  + b64_buenfuturohoy + ;
+
+const headerXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+       xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+       xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+       xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+<w:tbl>
+<w:tblPr><w:tblW w:w="9360" w:type="dxa"/><w:tblBorders>
+<w:top w:val="none"/><w:left w:val="none"/><w:bottom w:val="none"/>
+<w:right w:val="none"/><w:insideH w:val="none"/><w:insideV w:val="none"/>
+</w:tblBorders></w:tblPr>
+<w:tr>
+<w:tc><w:tcPr><w:tcW w:w="2000" w:type="dxa"/>
+<w:tcBorders><w:top w:val="none"/><w:left w:val="none"/><w:bottom w:val="none"/><w:right w:val="none"/></w:tcBorders>
+</w:tcPr>
+<w:p><w:r><w:rPr/><w:drawing><wp:inline><wp:extent cx="685800" cy="822960"/><wp:docPr id="1" name="logo1"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="1" name="logo1"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId4"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="685800" cy="822960"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>
+</w:tc>
+<w:tc><w:tcPr><w:tcW w:w="7360" w:type="dxa"/>
+<w:tcBorders><w:top w:val="none"/><w:left w:val="none"/><w:bottom w:val="none"/><w:right w:val="none"/></w:tcBorders>
+</w:tcPr>
+<w:p><w:pPr><w:jc w:val="right"/></w:pPr><w:r><w:rPr/><w:drawing><wp:inline><wp:extent cx="1371600" cy="228600"/><wp:docPr id="2" name="logo2"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="2" name="logo2"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId5"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="1371600" cy="228600"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="auto"/></w:pBdr></w:pPr></w:p>
+</w:hdr>`;
+
+const headerRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/img1.png"/>
+<Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/img2.png"/>
 </Relationships>`;
 
   const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 <Default Extension="xml" ContentType="application/xml"/>
+<Default Extension="png" ContentType="image/png"/>
 <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
 <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
+<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
 </Types>`;
 
   const packageRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -142,6 +181,9 @@ ${parrafo(hoy)}
     return { local: Buffer.concat([local, dataBuf]), name: nameBuf, crc, size: dataBuf.length, compressed: dataBuf.length };
   }
 
+  const img1Buf = Buffer.from(IMG_DEFENSORIA, 'base64');
+  const img2Buf = Buffer.from(IMG_BUENFUTUROHOY, 'base64');
+
   const archivos = [
     ['[Content_Types].xml', contentTypes],
     ['_rels/.rels', packageRels],
@@ -149,6 +191,10 @@ ${parrafo(hoy)}
     ['word/styles.xml', estilos],
     ['word/numbering.xml', numeracion],
     ['word/_rels/document.xml.rels', rels],
+    ['word/header1.xml', headerXml],
+    ['word/_rels/header1.xml.rels', headerRels],
+    ['word/media/img1.png', img1Buf],
+    ['word/media/img2.png', img2Buf],
   ];
 
   const entries = [];
