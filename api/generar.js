@@ -3,8 +3,6 @@ import { createHash } from 'crypto';
 import { gzipSync } from 'zlib';
 
 // Genera un .docx (ZIP con XML) sin dependencias externas
-const IMG1_B64 = B64_DEFENSORIA;
-
 
 function crearDocx(campos, secciones) {
   const p = v => v || '[PENDIENTE]';
