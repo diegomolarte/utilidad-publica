@@ -19,7 +19,7 @@ function crearDocx(campos, secciones) {
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
   function parrafo(txt, opts = {}) {
-    const { bold = false, size = 24, before = 0, after = 0, justify = true, bullet = false } = opts;
+    const { bold=false, size=24, before=0, after=0, justify=true, bullet=false } = opts;
     const pPr = `<w:pPr>${justify && !bullet ? '<w:jc w:val="both"/>' : ''}${bullet ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : ''}<w:spacing w:before="${before}" w:after="${after}"/></w:pPr>`;
     const rPr = `<w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana"/><w:sz w:val="${size}"/>${bold ? '<w:b/>' : ''}</w:rPr>`;
     if (!txt && txt !== 0) return `<w:p>${pPr}</w:p>`;
@@ -73,7 +73,6 @@ ${seccion(secciones.conclusion)}
 ${parrafo('Entrevistó:', {before:240, after:0})}
 ${parrafo(p(campos.entrevistador))}
 ${parrafo('Equipo de atención jurídica de la Dirección Nacional de Defensoría Pública')}
-${parrafo('Dirección Nacional de Defensoría Pública')}
 ${parrafo(hoy)}
 </w:body>
 </w:document>`;
@@ -168,15 +167,25 @@ export default async function handler(req, res) {
   const apiKey = req.headers['x-api-key'] || process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(401).json({ error: 'API key no configurada' });
 
-  const { campos } = req.body;
+  const { campos, contexto_b64, contexto_tipo } = req.body;
   if (!campos?.notas) return res.status(400).json({ error: 'Faltan notas de la entrevista' });
 
   try {
     const client = new Anthropic({ apiKey });
-    const message = await client.messages.create({
-      model: 'claude-opus-4-6',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: `Eres asistente jurídico de la Defensoría del Pueblo de Colombia. Redacta el Reporte de Entrevista a familiar o tercero, bajo la Ley 2292 de 2023.
+
+    // Construir contenido del mensaje — con o sin documento de contexto
+    const msgContent = [];
+
+    if (contexto_b64 && contexto_tipo === 'application/pdf') {
+      msgContent.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: contexto_b64 },
+        title: 'Reporte de entrevista previo de la usuaria',
+        context: 'Este es el reporte de entrevista previa de la usuaria (Módulo 1). Úsalo como contexto completo del caso. Los nombres de los hijos, la situación económica, la vivienda y demás datos que aparezcan aquí deben ser coherentes con lo que redactes.'
+      });
+    }
+
+    msgContent.push({ type: 'text', text: `Eres asistente jurídico de la Defensoría del Pueblo de Colombia. Redacta el Reporte de Entrevista a familiar o tercero, bajo la Ley 2292 de 2023.
 
 Este reporte recoge el testimonio de un familiar o tercero que conoce a la usuaria y corrobora sus condiciones de marginalidad y jefatura de hogar.
 
@@ -208,7 +217,12 @@ INSTRUCCIONES:
 - NUNCA incluyas párrafos de recomendaciones, sugerencias ni notas del tipo "se recomienda", "se sugiere", "los datos señalados como [PENDIENTE] quedan sujetos a". Nada al final del documento salvo la firma.
 
 Responde SOLO JSON sin backticks:
-{"marginalidad":"3-5 párrafos sobre lo que el familiar/tercero corroboró respecto a las condiciones de marginalidad de la usuaria, separados por doble salto","jefatura_hogar":"3-5 párrafos sobre lo que corroboró del rol de jefatura de hogar","informacion_adicional":"2-4 párrafos con información adicional relevante que aportó el entrevistado, o [PENDIENTE] si no hay nada adicional relevante","conclusion":"2-3 párrafos de conclusión mencionando Ley 2292 de 2023 y el valor del testimonio para sustentar la solicitud"}` }]
+{"marginalidad":"3-5 párrafos sobre lo que el familiar/tercero corroboró respecto a las condiciones de marginalidad de la usuaria, separados por doble salto","jefatura_hogar":"3-5 párrafos sobre lo que corroboró del rol de jefatura de hogar","informacion_adicional":"2-4 párrafos con información adicional relevante que aportó el entrevistado, o escribe exactamente la palabra null si no hay nada adicional relevante","conclusion":"2-3 párrafos de conclusión mencionando Ley 2292 de 2023 y el valor del testimonio para sustentar la solicitud"}` });
+
+    const message = await client.messages.create({
+      model: 'claude-opus-4-6',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: msgContent }]
     });
 
     const secciones = JSON.parse(message.content[0].text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim());
