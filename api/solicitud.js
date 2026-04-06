@@ -18,7 +18,7 @@ function crc32(buf) {
 function crearDocx(secciones) {
   const estilos = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="24"/></w:rPr></w:rPrDefault></w:docDefaults>
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana"/><w:sz w:val="24"/></w:rPr></w:rPrDefault></w:docDefaults>
 <w:style w:type="paragraph" w:styleId="ListBullet"><w:name w:val="List Bullet"/><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr></w:pPr></w:style>
 </w:styles>`;
 
@@ -36,7 +36,7 @@ function crearDocx(secciones) {
     const { bold=false, size=24, before=0, after=120, justify=true, bullet=false, center=false } = opts;
     const align = center ? '<w:jc w:val="center"/>' : (justify && !bullet ? '<w:jc w:val="both"/>' : '');
     const pPr = `<w:pPr>${align}${bullet ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : ''}<w:spacing w:before="${before}" w:after="${after}"/></w:pPr>`;
-    const rPr = `<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="${size}"/>${bold ? '<w:b/>' : ''}</w:rPr>`;
+    const rPr = `<w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana"/><w:sz w:val="${size}"/>${bold ? '<w:b/>' : ''}</w:rPr>`;
     if (!txt && txt !== 0) return `<w:p>${pPr}</w:p>`;
     return `<w:p>${pPr}<w:r>${rPr}<w:t xml:space="preserve">${esc(String(txt))}</w:t></w:r></w:p>`;
   }
@@ -59,7 +59,7 @@ function crearDocx(secciones) {
   const cuerpo = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:body>
-<w:sectPr><w:pgMar w:top="1134" w:right="1418" w:bottom="1418" w:left="1701" w:header="567" w:footer="567"/></w:sectPr>
+<w:sectPr><w:headerReference w:type="default" r:id="rId3"/><w:pgMar w:top="1134" w:right="1418" w:bottom="1418" w:left="1701" w:header="567" w:footer="567"/></w:sectPr>
 ${p(secciones.encabezado_ciudad_fecha || '', {justify:false})}
 ${p(secciones.encabezado_cargo_juez || '', {justify:false})}
 ${p(secciones.encabezado_nombre_juez || '', {justify:false, bold:true})}
@@ -77,7 +77,9 @@ ${seccionTexto(secciones.seccion1_contexto)}
 ${p('')}
 ${p('II. FUNDAMENTOS JURÍDICOS', {bold:true, before:200, after:120, justify:false})}
 ${p('')}
-${seccionTexto(secciones.seccion2_fundamentos)}
+${seccionTexto(TEXTO_FIJO_SECCION2.replace('[NOMBRE COMPLETO DE LA CONDENADA]', secciones.nombre_condenada || '[PENDIENTE]'))}
+${p('')}
+${seccionTexto(secciones.seccion2_requisitos)}
 ${p('')}
 ${p('III. PROPUESTA FRENTE AL PLAN DE SERVICIOS DE UTILIDAD PÚBLICA', {bold:true, before:200, after:120, justify:false})}
 ${p('')}
@@ -112,15 +114,37 @@ ${p('Defensoría del Pueblo', {justify:false})}
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
 <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>
+</Relationships>`;
+
+const IMG_SOLICITUD =  + b64_solicitud + ;
+
+const headerXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+       xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+       xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+       xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+<w:p>
+<w:r><w:rPr/><w:drawing><wp:inline><wp:extent cx="5486400" cy="457200"/><wp:docPr id="1" name="logo_sol"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="1" name="logo_sol"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId4"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="5486400" cy="457200"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>
+</w:p>
+<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="auto"/></w:pBdr></w:pPr></w:p>
+</w:hdr>`;
+
+const headerRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/img_sol.png"/>
 </Relationships>`;
 
   const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 <Default Extension="xml" ContentType="application/xml"/>
+<Default Extension="png" ContentType="image/png"/>
 <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
 <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
+<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
 </Types>`;
 
   const packageRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -142,10 +166,15 @@ ${p('Defensoría del Pueblo', {justify:false})}
     return { local: Buffer.concat([local, dataBuf]), name: nameBuf, crc, size: dataBuf.length };
   }
 
+  const imgSolBuf = Buffer.from(IMG_SOLICITUD, 'base64');
+
   const archivos = [
     ['[Content_Types].xml', contentTypes], ['_rels/.rels', packageRels],
     ['word/document.xml', cuerpo], ['word/styles.xml', estilos],
     ['word/numbering.xml', numeracion], ['word/_rels/document.xml.rels', rels],
+    ['word/header1.xml', headerXml],
+    ['word/_rels/header1.xml.rels', headerRels],
+    ['word/media/img_sol.png', imgSolBuf],
   ];
 
   const entries = []; let offset = 0; const localParts = [];
@@ -175,6 +204,19 @@ ${p('Defensoría del Pueblo', {justify:false})}
 
   return Buffer.concat([...localParts, cdBuf, eocd]);
 }
+
+// ── Texto fijo obligatorio — arranque Sección 2 ────────────
+const TEXTO_FIJO_SECCION2 = `FUNDAMENTOS JURÍDICOS LEY 2292 DE 2023 QUE SE CUMPLEN EN EL CASO CONCRETO
+
+La Ley 2292 del 8 de marzo de 2023 surge como una respuesta del Estado frente a una realidad ampliamente documentada en el sistema penitenciario: un número significativo de mujeres privadas de la libertad son madres que han debido asumir solas la responsabilidad de sus hogares y que terminaron involucradas en conductas delictivas en contextos de precariedad económica, exclusión social y ausencia de oportunidades reales. Por ello, esta ley incorpora acciones afirmativas en materia de política criminal y penitenciaria para mujeres cabeza de familia, reconociendo que la respuesta punitiva tradicional (basada exclusivamente en el encarcelamiento) puede generar consecuencias desproporcionadas no solo para la mujer condenada, sino también para los hijos menores que dependen de ella.
+
+En este mismo sentido, la Corte Constitucional, mediante la Sentencia C-256 de 2022, advirtió que los Estados deben implementar medidas alternativas al encarcelamiento cuando se trate de mujeres que, debido a sus condiciones de vida, se ven involucradas en delitos asociados, entre otros, al narcotráfico. Esta consideración no constituye una simple afirmación retórica. Por el contrario, representa un llamado a que la política criminal tenga en cuenta los datos empíricos y las realidades sociales que rodean la vida de muchas mujeres procesadas penalmente.
+
+En desarrollo de esta orientación, la Ley 2292 incorporó al ordenamiento jurídico la pena sustitutiva de servicios de utilidad pública para mujeres cabeza de familia, consistente en la prestación de servicios no remunerados, en libertad, a favor de instituciones públicas u organizaciones sin ánimo de lucro en el lugar de domicilio de la condenada. Se trata de una medida que permite el cumplimiento de la sanción penal sin desarraigar completamente a la mujer de su entorno familiar, especialmente cuando existen hijos menores de edad que dependen de su cuidado y acompañamiento cotidiano.
+
+La Ley 2292 de 2023, en su artículo 7 —que adicionó el artículo 38-I al Código Penal— establece los requisitos para acceder a esta pena sustitutiva. Dichos requisitos fueron sintetizados por la Honorable Corte Constitucional en los siguientes términos: "Solo opera para mujeres cabeza de familia, condenadas por los delitos establecidos en los artículos 239, 240, 241, 375, 376 y 377 del Código Penal, o condenadas a otros delitos cuya pena impuesta sea igual o inferior a ocho (8) años de prisión (art. 2 y art. 7.1). Se debe demostrar que la comisión del delito está asociada a condiciones de marginalidad que afecten la manutención del hogar (art. 2 y art. 7.6). La medida [...] no se aplicará cuando haya condena en firme por otro delito doloso dentro de los (5) años anteriores a la comisión del nuevo ilícito o exista concurso con conductas punibles distintas a las señaladas con anterioridad (art. 2), salvo que se trate de delitos culposos, que tengan como pena principal la multa o que sea por los punibles anteriormente enunciados (art. 7.2). Se debe demostrar que la beneficiaria es madre cabeza de familia. Lo cual significa, para los efectos del proyecto de ley, tener vínculos familiares, demostrando que la condenada ejerce la jefatura del hogar y tiene bajo su cargo afectiva, económica y socialmente de manera permanente hijos menores o personas en condición de discapacidad permanente (art. 7.4)." (Sentencia C-256 de 2022, párrafo 272).
+
+A continuación se acredita el cumplimiento de cada uno de estos requisitos en el caso concreto de la señora [NOMBRE COMPLETO DE LA CONDENADA]:`;
 
 // ── Handler principal ───────────────────────────────────────
 export default async function handler(req, res) {
@@ -264,51 +306,36 @@ INSTRUCCIONES:
 
 4. En el cuerpo del documento, inserta las referencias cruzadas (ver Anexo No. X) cada vez que menciones una prueba.
 
-5. AJUSTE ADRES — PERSONAS PRIVADAS DE LA LIBERTAD: Si la consulta ADRES muestra a la condenada como "retirada" o sin afiliación vigente, NO interpretes esto como ausencia de cobertura de salud. Esto ocurre porque al ingresar al sistema penitenciario, la atención en salud pasa al Fondo de Atención en Salud para la Población Privada de la Libertad (FASPPL), y la persona sale automáticamente del Sistema General de Seguridad Social en Salud. En ese caso, redacta así: "La señora [NOMBRE] figuraba afiliada al momento de su privación de la libertad como [régimen y calidad que aparezca en la consulta]. En la actualidad aparece retirada del Sistema General de Seguridad Social en Salud, lo cual obedece a que, una vez privada de la libertad, su atención en salud quedó a cargo del Fondo de Atención en Salud para la Población Privada de la Libertad, conforme a la normativa penitenciaria vigente (ver Anexo No. X)."
+5. AJUSTE ADRES — PERSONAS PRIVADAS DE LA LIBERTAD: Si la consulta ADRES muestra a la condenada como "retirada" o sin afiliación vigente, NO interpretes esto como ausencia de cobertura de salud. Esto ocurre porque al ingresar al sistema penitenciario, la atención en salud pasa al Fondo de Atención en Salud para la Población Privada de la Libertad (FASPPL). En ese caso, redacta así: "La señora [NOMBRE] figuraba afiliada al momento de su privación de la libertad como [régimen y calidad que aparezca en la consulta]. En la actualidad aparece retirada del Sistema General de Seguridad Social en Salud, lo cual obedece a que, una vez privada de la libertad, su atención en salud quedó a cargo del Fondo de Atención en Salud para la Población Privada de la Libertad, conforme a la normativa penitenciaria vigente (ver Anexo No. X)."
 
-6. DECRETO REGLAMENTARIO: La Ley 2292 de 2023 está reglamentada por el Decreto 1451 de 2023. Si necesitas citar el decreto reglamentario, usa siempre el Decreto 1451 de 2023. NUNCA cites el Decreto 1069 de 2024.
+6. DECRETO REGLAMENTARIO: La Ley 2292 de 2023 está reglamentada por el Decreto 1451 de 2023. Si citas el decreto reglamentario, usa siempre el Decreto 1451 de 2023. NUNCA cites el Decreto 1069 de 2024.
 
-7. TEXTO OBLIGATORIO DE ARRANQUE DE LA SECCIÓN 2: La sección de fundamentos jurídicos SIEMPRE debe comenzar exactamente con el siguiente texto, sin modificaciones, antes de la verificación de los 4 requisitos:
+7. Registro formal jurídico. Tercera persona. Los hijos siempre con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)".
 
-"FUNDAMENTOS JURÍDICOS LEY 2292 DE 2023 QUE SE CUMPLEN EN EL CASO CONCRETO
-
-La Ley 2292 del 8 de marzo de 2023 surge como una respuesta del Estado frente a una realidad ampliamente documentada en el sistema penitenciario: un número significativo de mujeres privadas de la libertad son madres que han debido asumir solas la responsabilidad de sus hogares y que terminaron involucradas en conductas delictivas en contextos de precariedad económica, exclusión social y ausencia de oportunidades reales. Por ello, esta ley incorpora acciones afirmativas en materia de política criminal y penitenciaria para mujeres cabeza de familia, reconociendo que la respuesta punitiva tradicional (basada exclusivamente en el encarcelamiento) puede generar consecuencias desproporcionadas no solo para la mujer condenada, sino también para los hijos menores que dependen de ella.
-
-En este mismo sentido, la Corte Constitucional, mediante la Sentencia C-256 de 2022, advirtió que los Estados deben implementar medidas alternativas al encarcelamiento cuando se trate de mujeres que, debido a sus condiciones de vida, se ven involucradas en delitos asociados, entre otros, al narcotráfico. Esta consideración no constituye una simple afirmación retórica. Por el contrario, representa un llamado a que la política criminal tenga en cuenta los datos empíricos y las realidades sociales que rodean la vida de muchas mujeres procesadas penalmente.
-
-En desarrollo de esta orientación, la Ley 2292 incorporó al ordenamiento jurídico la pena sustitutiva de servicios de utilidad pública para mujeres cabeza de familia, consistente en la prestación de servicios no remunerados, en libertad, a favor de instituciones públicas u organizaciones sin ánimo de lucro en el lugar de domicilio de la condenada. Se trata de una medida que permite el cumplimiento de la sanción penal sin desarraigar completamente a la mujer de su entorno familiar, especialmente cuando existen hijos menores de edad que dependen de su cuidado y acompañamiento cotidiano.
-
-La Ley 2292 de 2023, en su artículo 7 —que adicionó el artículo 38-I al Código Penal— establece los requisitos para acceder a esta pena sustitutiva. Dichos requisitos fueron sintetizados por la Honorable Corte Constitucional en los siguientes términos: 'Solo opera para mujeres cabeza de familia, condenadas por los delitos establecidos en los artículos 239, 240, 241, 375, 376 y 377 del Código Penal, o condenadas a otros delitos cuya pena impuesta sea igual o inferior a ocho (8) años de prisión (art. 2 y art. 7.1). Se debe demostrar que la comisión del delito está asociada a condiciones de marginalidad que afecten la manutención del hogar (art. 2 y art. 7.6). La medida [...] no se aplicará cuando haya condena en firme por otro delito doloso dentro de los (5) años anteriores a la comisión del nuevo ilícito o exista concurso con conductas punibles distintas a las señaladas con anterioridad (art. 2), salvo que se trate de delitos culposos, que tengan como pena principal la multa o que sea por los punibles anteriormente enunciados (art. 7.2). Se debe demostrar que la beneficiaria es madre cabeza de familia. Lo cual significa, para los efectos del proyecto de ley, tener vínculos familiares, demostrando que la condenada ejerce la jefatura del hogar y tiene bajo su cargo afectiva, económica y socialmente de manera permanente hijos menores o personas en condición de discapacidad permanente (art. 7.4).' (Sentencia C-256 de 2022, párrafo 272).
-
-A continuación se acredita el cumplimiento de cada uno de estos requisitos en el caso concreto de la señora [NOMBRE COMPLETO DE LA CONDENADA]:"
-
-Después de este bloque fijo, continúa con la verificación de los 4 requisitos.
-
-8. Registro formal jurídico. Tercera persona. Los hijos siempre con nombre completo y edad. Cifras en formato "quinientos mil pesos ($500.000)".
-
-9. Si algún dato del caso no está disponible, usa [PENDIENTE].
+8. Si algún dato no está disponible, usa [PENDIENTE].
 
 Responde SOLO con un JSON válido sin backticks, con esta estructura exacta:
 {
-  "encabezado_ciudad_fecha": "Bogotá, D.C., [fecha]",
-  "encabezado_cargo_juez": "Señor(a) Juez(a) Penal",
-  "encabezado_nombre_juez": "[nombre del juez]",
-  "encabezado_juzgado": "[nombre del juzgado]",
-  "encabezado_ciudad": "[ciudad], [departamento]",
-  "parrafo_intro": "párrafo introductorio completo donde el defensor se presenta y formula la solicitud",
+  "nombre_condenada": "nombre completo de la condenada extraído de los documentos o datos del caso",
+  "encabezado_ciudad_fecha": "ciudad y fecha",
+  "encabezado_cargo_juez": "cargo del juez",
+  "encabezado_nombre_juez": "nombre del juez",
+  "encabezado_juzgado": "nombre del juzgado",
+  "encabezado_ciudad": "ciudad, departamento",
+  "parrafo_intro": "párrafo introductorio donde el defensor se presenta y formula la solicitud",
   "seccion1_contexto": "sección completa de contexto de jefatura y marginalidad — múltiples párrafos separados por doble salto de línea, con referencias cruzadas a los anexos",
-  "seccion2_fundamentos": "sección completa comenzando OBLIGATORIAMENTE con el texto fijo indicado en la instrucción 7, seguido de la verificación de los 4 requisitos de la Ley 2292",
-  "seccion3_plaza": "sección completa sobre la plaza SIUP y el plan de servicios, citando el Decreto 1451 de 2023 si corresponde",
-  "seccion4_peticion": "texto completo de la petición con los tres numerales",
-  "lista_anexos": "lista completa de anexos numerada, un anexo por línea comenzando con •",
-  "notificaciones": "texto de notificaciones con dirección de la condenada y del defensor",
-  "firma_nombre": "[nombre completo del defensor]",
-  "firma_tp": "[número de tarjeta profesional]"
+  "seccion2_requisitos": "SOLO la verificación de los 4 requisitos de la Ley 2292 con los datos del caso concreto — NO incluyas el texto introductorio de la ley, ese ya se agrega automáticamente",
+  "seccion3_plaza": "sección sobre la plaza SIUP y el plan de servicios, citando el Decreto 1451 de 2023",
+  "seccion4_peticion": "petición con los tres numerales",
+  "lista_anexos": "lista de anexos numerada, un anexo por línea comenzando con •",
+  "notificaciones": "notificaciones con dirección de la condenada y del defensor",
+  "firma_nombre": "nombre completo del defensor",
+  "firma_tp": "número de tarjeta profesional"
 }`
     });
 
     const message = await client.messages.create({
-      model: 'claude-opus-4-6',
+      model: 'claude-sonnet-4-6',
       max_tokens: 8000,
       messages: [{ role: 'user', content: contenidoUsuario }]
     });
