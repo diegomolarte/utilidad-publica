@@ -3,6 +3,8 @@ import { createHash } from 'crypto';
 import { gzipSync } from 'zlib';
 
 // Genera un .docx (ZIP con XML) sin dependencias externas
+const IMG1_B64 = B64_DEFENSORIA;
+
 
 function crearDocx(campos, secciones) {
   const p = v => v || '[PENDIENTE]';
@@ -70,7 +72,7 @@ ${parrafo('Conclusión.', {bold:true,before:200,after:120,justify:false})}
 ${seccion(secciones.conclusion)}
 ${parrafo('Entrevistó:', {before:240, after:0})}
 ${parrafo(p(campos.entrevistador))}
-${parrafo('Equipo de atención jurídica')}
+${parrafo('Equipo de atención jurídica de la Dirección Nacional de Defensoría Pública')}
 ${parrafo('Dirección Nacional de Defensoría Pública')}
 ${parrafo(hoy)}
 </w:body>
@@ -231,8 +233,9 @@ Registro formal jurídico tercera persona. Usa "manifestó que", "señaló que",
 
 REGLAS ESTRICTAS:
 - Cuando menciones la ley, usa SIEMPRE "Ley 2292 de 2023" sin citar su nombre completo. NUNCA escribas el nombre largo de la ley.
+- Cuando te refieras a quien realizó la entrevista, usa siempre una expresión como "la entrevista fue realizada por [nombre], del equipo de atención jurídica de la Dirección Nacional de Defensoría Pública". NUNCA uses "defensor público" ni "defensora pública" al referirte al entrevistador.
 - La sección "hechos_captura" narra SOLO el relato de cómo ocurrió el delito: el contexto inmediato, la motivación y el acto. NO incluyas ningún dato judicial: no menciones juzgados, radicados, medidas de aseguramiento, fechas de imposición de medidas, ni ninguna referencia al proceso penal posterior al hecho. Se sobreentiende que está privada de la libertad.
-- NUNCA incluyas párrafos de recomendaciones, sugerencias al lector o notas como "se recomienda adelantar gestiones", "se sugiere verificar", "se recomienda completar la información", ni ningún texto de ese tipo. El documento es un reporte de entrevista, no un informe con recomendaciones. Si falta información, simplemente usa [PENDIENTE] en el dato específico y nada más.
+- NUNCA incluyas párrafos de recomendaciones, sugerencias al lector o notas como "se recomienda adelantar gestiones", "se sugiere verificar", "se recomienda completar la información", "los datos señalados como [PENDIENTE] quedan sujetos a", ni ningún texto de ese tipo. El documento es un reporte de entrevista, no un informe con recomendaciones. Si falta información, simplemente usa [PENDIENTE] en el dato específico y nada más. NADA al final del documento salvo la firma.
 
 Responde SOLO JSON sin backticks:
 {"marginalidad":"3-5 párrafos separados por doble salto","jefatura_hogar":"4-6 párrafos","hechos_captura":"5-6 párrafos narrando SOLO el contexto previo al delito, la motivación económica y el acto. SIN datos judiciales posteriores.","conclusion":"3-4 párrafos mencionando Ley 2292 de 2023"}` }]
